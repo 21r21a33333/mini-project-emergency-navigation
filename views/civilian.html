@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Civilian {{ userId }} </title>
+    
+</head>
+
+<body data-userId="{{ userId }}">
+    <h1> Hello, Civilian {{ userId }} </h1>
+    <div id ="civilian-location"></div>
+    <h4 id="notification"></h4>
+    <button onclick="requestForHelp()">
+        Request for help
+    </button>
+
+    <div id="map" style="width: 600px; height: 400px;">
+        <!-- Load a map here -->
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        const socket = io();
+
+        const userId = document.body.getAttribute("data-userId");
+        socket.emit("join", {
+            userId: userId
+        }); // Join a room, roomname is the userId itself!
+
+        // Empty variables to store information. This will get filled later
+        let requestDetails = {};
+        let copDetails = {};
+        let map, marker;
+
+        requestDetails = {
+            civilianId: userId,
+            location: {
+                address: "Indiranagar, Bengaluru, Karnataka 560038, India",
+                latitude: 12.9718915,
+                longitude: 77.64115449999997
+            }
+        }
+        document.getElementById("notification").innerHTML =`current location is ${requestDetails.location.latitude}<------>${requestDetails.location.longitude}`
+
+        function requestForHelp() { // When button is clicked, emit an event
+            socket.emit("request-for-help", requestDetails);
+        }
+
+        // Listen for a 'request-accepted' event
+        socket.on("request-accepted", (eventData) => {
+            copDetails = eventData; // Save cop details
+
+            // Display Cop address
+            document.getElementById("notification").innerHTML =
+                `${copDetails.displayName} is near ${copDetails.location.address} and will be arriving at your location shortly.
+                You can reach them at their mobile ${copDetails.phone}`;
+        });
+
+    </script>
+</body>
+
+</html>

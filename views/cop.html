@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title> Officer {{ userId }} </title>
+    
+</head>
+
+<body data-userId="{{ userId }}">
+    <h1> Hello, Officer {{ userId }} </h1>
+    <h2>Profile: </h2>
+    <div id="copDetails"></div>
+
+    <h4 id="notification"> Waiting for requests...</h4>
+
+    <button onclick="helpCivilian()">
+        Help Civilian
+    </button>
+
+    <div id="map" style="width: 600px; height: 400px;"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        const socket = io();
+
+        // Fetch userId from the data-atribute of the body tag
+        const userId = document.body.getAttribute("data-userId");
+        // Join a room, roomname is the userId itself!
+        socket.emit("join", {
+            userId: userId
+        });
+
+        // Empty variables to store information. This will get filled later
+        let requestDetails = {};
+        let copDetails = {};
+        let map, marker;
+
+        // First send a GET request using Axios and get the cop's details and save it
+        axios.get(`/cops/info?userId=${userId}`)
+            .then( (response) => {
+                copDetails = response.data.copDetails;
+                copDetails.location = {
+                    address: copDetails.location.address,
+                    longitude: copDetails.location.coordinates[0],
+                    latitude: copDetails.location.coordinates[1]
+                };
+
+                document.getElementById("copDetails").innerHTML =
+                    `Display Name: ${copDetails.displayName}
+                    Address: ${copDetails.location.address}----->{longitude:${copDetails.location.longitude}
+                    latitide:${copDetails.location.latitude}}
+                    
+                    `;
+                
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        // Listen for a 'request-for-help' event
+        socket.on("request-for-help", (eventData) => {
+            requestDetails = eventData; // Save request details
+
+            // display civilian info
+            document.getElementById("notification").innerHTML =
+            `Civilian ${requestDetails.civilianId} is being attacked by a wildling and needs help!
+            They're at ${requestDetails.location.address}`;
+
+
+        });
+
+        function helpCivilian() {
+            // On clicking the button, emit a 'request-accepted' event/signal and send relevant info back to server
+            socket.emit("request-accepted", {
+                requestDetails: requestDetails,
+                copDetails: copDetails
+            });
+        }
+    </script>
+</body>
+
+</html>
