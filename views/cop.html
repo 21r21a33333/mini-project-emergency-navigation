@@ -7,7 +7,7 @@
     
 </head>
 
-<body data-userId="{{ userId }}">
+<body data-userId="{{ userId }}" style="font-size: larger;">
     <h1> Hello, Officer {{ userId }} </h1>
     <h2>Profile: </h2>
     <div id="copDetails"></div>
@@ -66,11 +66,16 @@
         // Listen for a 'request-for-help' event
         socket.on("request-for-help", (eventData) => {
             requestDetails = eventData; // Save request details
+            console.log(requestDetails)
 
             // display civilian info
             document.getElementById("notification").innerHTML =
-            `Civilian ${requestDetails.civilianId} is being attacked by a wildling and needs help!
-            They're at ${requestDetails.location.address}`;
+            `Civilian ${requestDetails.civilianId} is in medical emergency and needs help!
+            They're at ${requestDetails.location.address}<br>
+            first report is:<br>
+            ${requestDetails.report}
+            `;
+            
 
 
         });

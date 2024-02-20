@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #674bb1;
+  font-family: "Open Sans", sans-serif;
+  color: #fff;
+  background-image: url(https://i.postimg.cc/nrSWWDM1/bg-mobile.png);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.container {
+  max-width: 375px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+header img {
+  height: 30px;
+}
+
+header {
+  margin-bottom: 3rem;
+}
+
+main {
+  text-align: center;
+}
+
+.landing-img img {
+  height: 209px;
+  margin-bottom: 24px;
+}
+
+h1 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+p {
+  font-size: 1rem;
+  margin-bottom: 24px;
+}
+
+button {
+  background-color: #fff;
+  color: #674bb1;
+  border-radius: 999px;
+  border: none;
+  box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  padding: 1.2rem 5rem;
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 30px;
+  transition: ease 0.5s;
+}
+
+button:hover {
+  background-color: #674bb1;
+  color: #fff;
+}
+
+footer ul {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+
+footer li {
+  list-style: none;
+}
+
+footer li a {
+  padding: 10px;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+          <img src="./imag/Group16.png" alt="logo" />
+        </header>
+      
+        <main>
+          <div class="landing-img">
+            <img src="./imag/assert.png" alt="mockup" />
+          </div>
+      
+          <div class="landing-text">
+            <h1>Saving Lives On Time <br>
+                 patient and medical data in one App</h1>
+            <p>"Experience seamless healthcare with our E-Medical Record platform. Access and manage your health records securely online. Stay protected with our Live Ambulance Tracker—ensuring swift emergency response when every second counts."
+            </p>
+            <button class="emer">IN EMERGENCY</button>
+            <button class="record">MEDICAL RECORDS</button>
+          </div>
+        </main>
+      
+        <footer>
+          <ul>
+            <li><a href="#"><img src="https://i.postimg.cc/QxGtjn4r/facebook-circle-1.png" alt="facebook icon"></a></li>
+            <li><a href="#"><img src="https://i.postimg.cc/TwcJ9WHk/instagram-circle-1.png" alt="instagram icon"></a></li>
+            <li><a href="#"><img src="https://i.postimg.cc/ZYWsFwx2/twitter-circle-1.png" alt="twitter icon"></a></li>
+          </ul>
+        </footer>
+      
+      </div>
+      <script>
+        let in_emer=document.querySelector(".emer")
+        let med_rec=document.querySelector(".record")
+        in_emer.addEventListener("click",()=>{
+          window.location.assign("routes.html")
+        })
+        med_rec.addEventListener("click",()=>{
+          window.location.assign("credentials.html")
+        })
+      </script>
+</body>
+</html>

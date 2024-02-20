@@ -1,0 +1,436 @@
+<>
+
+  <meta charset="utf-8" />
+  <title>Demo: Getting started with the Mapbox Directions API</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+  <link
+    href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+  <style>
+    body {font-family: Arial, Helvetica, sans-serif;}
+    * {box-sizing: border-box;}
+    
+    .input-container {
+      display: -ms-flexbox; /* IE10 */
+      display: flex;
+      width: 100%;
+      height:50px;
+      margin-bottom: 15px;
+    }
+    
+    .icon {
+      padding: 10px;
+      background: black;
+      color: white;
+      min-width: 50px;
+      text-align: center;
+    }
+    
+    .input-field {
+      width: 60vw;
+      font-size: 25px;
+      padding: 10px;
+      outline: none;
+    }
+    
+    .input-field:focus {
+      border: 2px solid dodgerblue;
+    }
+    
+    /* Set a style for the submit button */
+    .btn {
+      background-color: black;
+      color: white;
+      padding: 15px 20px;
+      border: none;
+      cursor: pointer;
+      width: 30%;
+      opacity: 0.9;
+    }
+    
+    .btn:hover {
+      opacity: 1;
+    }
+    </style>
+  <script
+    src="https://js.sentry-cdn.com/9c5feb5b248b49f79a585804c259febc.min.js"
+    crossorigin="anonymous"
+  ></script>
+  <style>
+    body {
+      font-family: "Lato", sans-serif;
+    }
+    
+    .sidepanel  {
+      width: 0;
+      position: fixed;
+      z-index: 1000;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+    }
+    
+    .sidepanel a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #818181;
+      display: block;
+      transition: 0.3s;
+    }
+    
+    .sidepanel a:hover {
+      color: #f1f1f1;
+    }
+    
+    .sidepanel .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+    }
+    
+    .openbtn {
+      font-size: 20px;
+      cursor: pointer;
+      background-color: #111;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+    }
+    
+    .openbtn:hover {
+      background-color:#444;
+    }
+    </style>
+</head>
+<body>
+  
+  <div id="map" class="mapboxgl-map"> 
+    <div style="position: absolute; z-index: 999; margin-top: 200%; margin-left: 2%;">
+      <form action="" style="max-width:500px;margin:auto ">
+        <div class="input-container">
+          <i id="navigate"class="fa fa-user icon"></i>
+          <input class="input-field" type="text" placeholder="enter drno" name="usrnm">
+          <button type="submit" class="btn">locate</button>  
+        </div>
+      </form>
+    </div> 
+  </div>
+
+  <div style="position: absolute;">
+    <div id="mySidepanel" class="sidepanel">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+      <a href="#">driver contact</a>
+      <a href="#">hospitals near me</a>
+    </div>
+    
+    <button class="openbtn" onclick="openNav()">☰ Help</button> 
+  </div> 
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+     
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js"
+      import { collection, getDocs, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js"
+      import { query, orderBy, limit, where, onSnapshot } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js"
+      const firebaseConfig = {
+      apiKey: "AIzaSyABqJwaAbiGK2m-BZXJ7cfzQT1HN-mD_TE",
+      authDomain: "mini-project-6992f.firebaseapp.com",
+      projectId: "mini-project-6992f",
+      storageBucket: "mini-project-6992f.appspot.com",
+      messagingSenderId: "889757635761",
+      appId: "1:889757635761:web:4dcf9b51b03c0cd1d0fe90"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+
+
+
+
+    mapboxgl.accessToken =
+      "pk.eyJ1IjoibWF0c2E5MTc3MzY2NTc4IiwiYSI6ImNsbXJiMmIyZjA2OXQyaXBpeGQwa3d0MG8ifQ.xhYxSwTG3YJS1US5_qgoxQ";
+      if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos)=>{
+              console.log(pos.coords.longitude,pos.coords.latitude)
+              func(pos.coords.longitude,pos.coords.latitude)
+            });
+          } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+          }
+      function func(long,lat){
+    const map = new mapboxgl.Map({
+      container: "map", // container id
+      style: "mapbox://styles/mapbox/streets-v12", // stylesheet location
+      center: [long, lat], // starting position
+      zoom: 12, // starting zoom
+    });
+    
+
+    //source
+      const start = [long, lat];
+    // create a function to make a directions request
+    async function getRoute(end) {
+      // make directions request using cycling profile
+      const query = await fetch(
+        `https://api.mapbox.com/directions/v5/mapbox/cycling/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
+        { method: "GET" }
+      );
+      const json = await query.json();
+      const data = json.routes[0];
+      const route = data.geometry.coordinates;
+      const geojson = {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: route,
+        },
+      };
+      // if the route already exists on the map, we'll reset it using setData
+      if (map.getSource("route")) {
+        map.getSource("route").setData(geojson);
+      }
+      // otherwise, we'll make a new request
+      else {
+        map.addLayer({
+          id: "route",
+          type: "line",
+          source: {
+            type: "geojson",
+            data: geojson,
+          },
+          layout: {
+            "line-join": "round",
+            "line-cap": "round",
+          },
+          paint: {
+            "line-color": "#3887be",
+            "line-width": 5,
+            "line-opacity": 0.75,
+          },
+        });
+      }
+      // we'll add turn instructions here at the end
+    }
+
+    map.on("load", () => {
+      // make an initial directions request that
+      // starts and ends at the same location
+      getRoute(start);
+
+      // Add starting point to the map
+      map.addLayer({
+        id: "point",
+        type: "circle",
+        source: {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: [
+              {
+                type: "Feature",
+                properties: {},
+                geometry: {
+                  type: "Point",
+                  coordinates: start,
+                },
+              },
+            ],
+          },
+        },
+        paint: {
+          "circle-radius": 10,
+          "circle-color": "#3887be",
+        },
+      });
+
+      //   map.on("click", (event) => {
+      //     const coords = Object.keys(event.lngLat).map(
+      //       (key) => event.lngLat[key]
+      //     );
+      //     console.log(coords)
+      //   });
+      function func(coords) {
+        const end = {
+          type: "FeatureCollection",
+          features: [
+            {
+              type: "Feature",
+              properties: {},
+              geometry: {
+                type: "Point",
+                coordinates: coords,
+              },
+            },
+          ],
+        };
+        if (map.getLayer("end")) {
+          map.getSource("end").setData(end);
+        } else {
+          map.addLayer({
+            id: "end",
+            type: "circle",
+            source: {
+              type: "geojson",
+              data: {
+                type: "FeatureCollection",
+                features: [
+                  {
+                    type: "Feature",
+                    properties: {},
+                    geometry: {
+                      type: "Point",
+                      coordinates: coords,
+                    },
+                  },
+                ],
+              },
+            },
+            paint: {
+              "circle-radius": 10,
+              "circle-color": "#f30",
+            },
+          });
+        }
+        getRoute(coords);
+      }
+      let sub=document.querySelector(".btn")
+      let frm=document.querySelector(".input-field")
+      sub.addEventListener("click",(e)=>{
+        e.preventDefault()
+        let driver_phno=frm.value;
+        let colRef=collection(db,'drivers')
+          const q = query(colRef, where("phone", "==", driver_phno))
+          getDocs(q)
+          .then((snapshot)=>{
+            snapshot.docs.forEach((doc)=>{
+              let dist_long=doc.data().location._long;
+              let dist_lat=doc.data().location._lat;
+              //adding navigation
+              let nav=document.querySelector("#navigate")
+              nav.addEventListener("click",()=>{
+                window.location.assign(`https://www.google.com/maps/search/?api=1&query=${dist_lat}%2C${dist_long}`)
+              })
+              func([dist_long, dist_lat]);
+              console.log(doc.data().location)
+              //adding driver credentials
+              let drivercon=document.querySelector("#mySidepanel > a:nth-child(2)");
+                let menu=document.querySelector("#mySidepanel");
+                let driv_present=false;
+                drivercon.addEventListener('click',()=>{
+                  if(!driv_present){
+                    let info=document.createElement('a');
+                  let driver_name=doc.data().displayName
+                  info.textContent=`${driver_name}  ☎` ;
+                  info.style.color="white"
+                  info.style.backgroundColor="green"
+                  info.addEventListener("click",()=>{
+                    window.open("tel:+919177366578")
+                  })
+                  menu.append(info);
+                  driv_present=true;
+                  }
+                })
+            })
+          })
+          .catch((err)=>{
+            console.log(err)
+          })
+      })
+      //destination
+      //func([78.449297, 17.54917]);
+      //func([78.459297, 17.54917]);
+      
+    const nav = new mapboxgl.NavigationControl()
+    map.addControl(nav)
+
+    });}
+  </script>
+    <script>
+      //fetching nearest locations
+      
+  function openNav() {
+    document.getElementById("mySidepanel").style.width = "100vw";
+  }
+  
+  function closeNav() {
+    document.getElementById("mySidepanel").style.width = "0";
+  }
+
+  
+  let hos_present=false;
+  let menu=document.querySelector("#mySidepanel");
+  let hos_data= document.querySelector("#mySidepanel > a:nth-child(3)");
+   console.log(hos_data);
+    hos_data.addEventListener('click',()=>{
+      console.log("in");
+      if(!hos_present){
+        async function nearest_hos(){
+        let data=await fetch("http://localhost:8000/cops?lat=12.9718915&&lng=77.64115449999997");
+        let res=await data.json();
+        let result=res.cops;
+        console.log(result);
+      let ul=document.createElement('ul');
+      ul.style.width="100%"
+      ul.style.fontSize="25px"
+      
+      ul.classList.add("list-group");
+      ul.classList.add("list-group");
+      ul.classList.add("list-group-flush");
+
+
+      result.forEach((data)=>{
+        
+        let li=document.createElement('li');
+        li.innerHTML=`hospital : ${data.displayName}`;
+        li.classList.add("list-group-item");
+        li.style.padding="8px 8px 8px 32px";
+        li.addEventListener('click',()=>{
+          window.location.assign(`https://www.google.com/maps/search/?api=1&query=${data.location.coordinates[1]}%2C${data.location.coordinates[0]}`)
+        })
+        ul.append(li);
+      })
+      
+      menu.append(ul)
+      hos_present=true;
+        
+      }
+      nearest_hos()
+      
+      }
+ })
+
+
+
+
+  </script>
+
+  
+</body>

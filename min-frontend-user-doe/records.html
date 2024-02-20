@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+      div.scrollmenu {
+        background-color: #333;
+        overflow: auto;
+        white-space: nowrap;
+      }
+      
+      div.scrollmenu a {
+        display: inline-block;
+        color: white;
+        text-align: center;
+        padding: 14px;
+        text-decoration: none;
+      }
+      
+      div.scrollmenu a:hover {
+        background-color: #777;
+      }
+      </style>
+  </head>
+  <body>
+    <nav class="navbar bg-primary"  data-bs-theme="dark" style="width: 90vw; margin: auto ; margin-top: 5px;margin-bottom: 5px ;" >
+      <div class="container-fluid" >
+        <span class="navbar-brand mb-0 h1">HEALTH RECORDS</span>
+      </div>
+      <div class="container-fluid" >
+        <button class="btn btn-outline-light"><a href="new_member.html" class="navbar-brand mb-0 h1" >add+</a></button>
+      </div>
+      
+    </nav>
+    <div class="scrollmenu" style="width: 90vw; margin: auto; margin-top: 3px; margin-bottom: 3px;">
+      <a href="homepage.html">Home</a> 
+    </div>
+    <div id="card"class="card" style="width: 90%; margin-left: auto;
+    margin-right: auto;" >
+      <img src="imag/pat1.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <a  id = "add-record" href="#" class="btn btn-primary">add record</a>
+      </div>
+    </div>
+    
+    <div id="hos-details"style="  width: 90vw; background-color:blanchedalmond;  margin: auto;"> 
+      <div class="dropdown" style="padding: 3px;">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          select hospital
+        </a>
+      
+        <ul class="dropdown-menu" style="padding: 5px;">
+          <li>^</li>
+          
+        </ul>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script>
+      let nav_bar=document.querySelector(".scrollmenu")
+      let data=JSON.parse( localStorage.getItem("user-record"))
+      let size = Object.keys(data).length -1;
+      for(let i=1;i<=size;i++){
+        let a=document.createElement('a')
+        a.innerText=String(i)
+        a.classList.add("patient-link")
+        a.setAttribute("href","#card")
+        nav_bar.appendChild(a)
+      }
+      
+
+    </script>
+    <script>
+      function funct(image,title,text){
+        let divi=document.createElement('div')
+        divi.classList.add("card")
+        divi.setAttribute("style","width: 98%;margin:auto")
+        let imgi=document.createElement("img")
+        imgi.setAttribute("src",image)
+        imgi.setAttribute("class","card-img-top");
+        divi.append(imgi)
+        let inner_div=document.createElement("div")
+        divi.append(inner_div)
+        inner_div.setAttribute("class","card-body");
+        let hone=document.createElement("h5")
+        inner_div.append(hone)
+        hone.setAttribute("class","card-title")
+        hone.innerText=title;
+        let para=document.createElement("p")
+        inner_div.append(para)
+        para.innerHTML=text;
+        para.setAttribute("class","card-text");
+        let lnk=document.createElement("a")
+        inner_div.append(lnk)
+        lnk.innerHTML="view report";
+        lnk.setAttribute("class","btn btn-primary")
+        lnk.setAttribute("href",image);
+
+
+
+        return divi;
+      }
+      let hos_detail=document.querySelector('#hos-details')
+      let pat_image=document.querySelector(".card-img-top");
+      let pat_name=document.querySelector(".card-title")
+      let pat_text=document.querySelector(".card-text")
+      //variables for fetching patient records
+      let dropdown_list=document.querySelector(".dropdown-menu");
+      
+    
+
+      //fetcching records accordingly
+      let pat_links=document.querySelectorAll(".patient-link")
+      pat_links.forEach((ele)=>{
+        ele.addEventListener("click",()=>{ 
+          let already=document.querySelectorAll("#hos-details > div.card") ;
+          already.forEach((ele)=>{
+            ele.remove()
+          })
+          let num=ele.innerHTML;
+          localStorage.setItem("last_patient",String(Number(Number(num)+1)))
+        pat_image.setAttribute("src",data[`person_${num}`]["photo"])
+        pat_name.innerHTML=data[`person_${num}`]["name"]
+        pat_text.innerHTML=`age : ${data[`person_${num}`]["age"]}`
+        
+          //console.log(data[`person_${num}`])
+          let pat_data=Object.keys(data[`person_${num}`]);
+          let hos_count=Object.keys(data[`person_${num}`]).length;
+          let rem=document.querySelector(".dropdown-menu")
+          while(rem.hasChildNodes()){
+            rem.removeChild(rem.firstChild)
+          }
+          pat_data.forEach((ele)=>{
+            if(ele[0]=='h'){
+              let lst=document.createElement("li")
+              lst.innerHTML=ele;
+              lst.addEventListener("click",()=>{
+                let already=document.querySelectorAll("#hos-details > div.card") ;
+                already.forEach((ele)=>{
+                  ele.remove()
+                })
+              //console.log(data[`person_${num}`][ele]["visit_1"]["reports"])
+              let work=data[`person_${num}`][ele]["visit_1"]["reports"];
+              localStorage.setItem("last_record",ele)
+              work.forEach((reportlink)=>{
+                let comp=funct(
+                `${reportlink}`
+              ,ele,"details")
+                hos_detail.append(comp)
+
+              })
+              })
+               
+              dropdown_list.append(lst)
+            }
+          })
+          
+        })
+      })
+      let click_event = new CustomEvent('click');
+      let num=localStorage.getItem("last_patient")
+      let btn_element = document.querySelector(`body > div.scrollmenu > a:nth-child(${num})`)
+      //document.querySelector("#hos-details > div.dropdown > ul > li:nth-child(1)")
+      btn_element.dispatchEvent(click_event);
+      let lists=document.querySelectorAll("li")
+      let hos=localStorage.getItem("last_record")
+      lists.forEach((ele)=>{
+        if(ele.innerText== hos){
+          ele.dispatchEvent(click_event);
+        }
+      })
+    </script>
+    <script type="module">
+      let add=document.querySelector("#add-record")
+      add.addEventListener("click",()=>{
+        window.location.assign("addrecord.html")
+      })
+
+    </script>
+    
+  </body>
+</html>

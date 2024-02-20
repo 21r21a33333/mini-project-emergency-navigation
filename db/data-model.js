@@ -43,6 +43,7 @@ const requestSchema = mongoose.Schema({
 	civilianId: { type: String },
 	copId: { type: String },
 	status: { type: String }
+
 });
 
 /**

@@ -3,11 +3,13 @@ const express = require('express');
 const consolidate = require('consolidate');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const routes = require('./routes'); //File that contains our endpoints
 const socketEvents = require('./socket-events');
 
 const app = express();
+app.use(cors());
 
 app.use(bodyParser.urlencoded({
     extended: true,
@@ -24,7 +26,7 @@ app.set('view engine', 'html');
 app.engine('html', consolidate.handlebars); // Use handlebars to parse templates when we do res.render
 
 // connect to Database
-const db = 'mongodb://0.0.0.0:27017/uberForX';
+const db = 'mongodb://0.0.0.0:27017/uberForX2';
 mongoose.connect(db, { useNewUrlParser: true,
     useUnifiedTopology: true
  }).then(value => {

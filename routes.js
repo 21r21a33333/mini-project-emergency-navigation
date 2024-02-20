@@ -5,10 +5,20 @@ const dbOperations = require('./db/db-operations');
 
 // request to /civilian.html?userId=ashwin will render our civilian.html page
 router.get('/civilian.html', (req, res) => {
+    console.log(req.query);
     res.render('civilian.html', {
-        userId: req.query.userId
+        userId: req.query.userId,
+        patient_phno:req.query.patient_phno
     });
 });
+
+//driver form
+router.get('/driver-dataform.html', (req, res) => {
+    res.render('driver-dataform.html', {
+        
+    });
+});
+
 
 router.get('/cop.html', (req, res) => {
     res.render('cop.html', {
